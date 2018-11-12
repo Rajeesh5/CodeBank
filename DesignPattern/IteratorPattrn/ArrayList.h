@@ -7,7 +7,7 @@ template <class Item>
 class ArrayList : public List<Item> {
 public:
 	ArrayList()
-		: m_currentSize(0)
+		: m_currentSize 0)
 	{
 
 	}
