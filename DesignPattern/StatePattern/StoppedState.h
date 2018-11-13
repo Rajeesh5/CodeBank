@@ -6,9 +6,15 @@
 
 class StoppedState : public MusicPlayerState {
 public:
-	StoppedState();
+	StoppedState(std::string nm);
 	virtual ~StoppedState();
-
+	
 	virtual void Play(MusicPlayer * player);
+
+	
+	virtual void Stop(MusicPlayer * player);
+	virtual void Pause(MusicPlayer * player);
+	virtual std::string GetName();
+	
 };
 #endif // !STOPPEDSTATE_H_

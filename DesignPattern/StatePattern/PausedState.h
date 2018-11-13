@@ -6,11 +6,14 @@
 
 class PausedState : public MusicPlayerState {
 public:
-	PausedState();
+	PausedState(std::string nm);
 	virtual ~PausedState();
 
 	virtual void Play(MusicPlayer * player);
 	virtual void Stop(MusicPlayer * player);
+
+	virtual void Pause(MusicPlayer * player);
+	virtual std::string GetName();
 };
 
 #endif // !PAUSEDSTATE_H_

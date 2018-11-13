@@ -4,21 +4,16 @@
 #define MUSICPLAYERSTATE_H_
 
 #include "MusicPlayer.h"
-#include <string>
+#include <iostream>
 
 class MusicPlayerState {
 public:
-	MusicPlayerState(std::string name);
-	virtual ~MusicPlayerState();
-
-	virtual void Play(MusicPlayer * player);
-	virtual void Pause(MusicPlayer * player);
-	virtual void Stop(MusicPlayer * player);
-
-	std::string GetName();
-
-private:
-	std::string   m_name;
+	virtual void Play(MusicPlayer * player) = 0;
+	virtual void Pause(MusicPlayer * player) = 0;
+	virtual void Stop(MusicPlayer * player) = 0;
+	virtual std::string GetName() = 0;
+protected:
+	std::string name;
 };
 
 #endif 
