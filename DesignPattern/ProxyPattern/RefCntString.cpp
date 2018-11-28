@@ -20,35 +20,43 @@ public:
 	RCString(const char *initValue = "");
 	RCString(const RCString& rhs);
 	RCString& operator=(const RCString& rhs);
-	//char& operator[](int index)const;				//For Const String
+	char& operator[](int index)const;				//For Const String
 	char& operator[](int index);					//For non-Const String.
 
 
 	~RCString();
 	void showStr()const {
-		cout <<"Data:: "<<value->data<<endl;
+		cout <<"Data:: "<<value->data<<", Address::"<< &(value->data)<<endl;
 		cout << "Ref cnt:: " << value->refCount<<endl;
 		cout << "---------------\n";
 	}
 };
 
-/*
+
+//Implementation of the const version of this function is straightforward, because it's a read-only operation; the
+//value of the string can't be affected
+
 char& RCString::operator[](int index)const
 {
 	if ((strlen(value->data) - 1) > index)
 		return value->data[index];
 	///else throw ArrayOutOfBoundExeception
 }
-*/
+
+//Non-const version, Since we donot know whether it is read or write, so we are creating new set of stringValue 
+//therefor it canot craete problem while write operation happning.
 
 char& RCString::operator[](int index) //throw ArrayOutOfBoundExeception,Implement leter..
 {
-	if (value->refCount > 1)  //if shareable..
+	// if we're sharing a value with other String objects, break off a separate copy of the value for ourselves
+	if (value->refCount > 0)
 	{
+		// decrement current value's refCount, because we won't be using that value any more
 		value->refCount--;
-		value = new StringValue(value->data);
+		value = new StringValue(value->data);   // make a copy of the value for ourselves.
 	}
 
+	// return a reference to a character inside our unshared StringValue object
 	return value->data[index];
 }
 
@@ -64,13 +72,10 @@ RCString& RCString::operator=(const RCString& rhs)
 }
 
 RCString::~RCString()
-{
-
+{	
 		if ((--value->refCount) == 0) {
-			value->~StringValue();
-
-		}
-			
+			value->~StringValue();			
+		}	
 }
 
 RCString::RCString(const char *initValue): value(new StringValue(initValue))
@@ -93,78 +98,52 @@ RCString::StringValue::~StringValue(){
 
 
 
-int main() {
+int main_1() {
 
 	{
-
-		/*
-		RCString s1("RefCntString");
-		s1.showStr();
-
-		RCString s2 = s1;	//Copy Constructor
-		s2.showStr();
-
-		RCString s3 = s1;	//Copy Constructor
-		s3.showStr();
 		
-		RCString s4("MoreEffectiveC++");
-		s4.showStr();
+		//Problem with Write operation-When we modify a String's value, we have to be careful to avoid 
+		//modifying the value of other String objects.Because we all share same value among classes.
+		//And Unfortunately, there is no way for C++ compilers to tell us whether a particular use of 
+		//operator[] is for a read or a write.
+				
+		//Write Operation
 
+		RCString str1("RajeevKumarSharma");		//str1->refCount=1
+		RCString str2(str1);					//str1->refCount=2,str2->refCount=2
+												//Both have same copy of string.
+		str2[0] = 'X';			//Now we will modifying str2, but It should not be inmpact str1
 
-		s4 = s4;			//should take care of this case.
-		s4 = s1;			//Assignment Operator overload.
-
-		s4.showStr();
-
-		const RCString s5("ThisIsConstString");
-
-
-		char ch1 = s4[3];			//Non Const RCString Read
-		char ch2 = s5[8];			//    Const RCString Read
-
-		*/
-
-		/*
-		Problem with Write operation-When we modify a String's value, we have to be careful to avoid 
-		modifying the value of other String objects.Because we all share same value among classes.
-		And Unfortunately, there is no way for C++ compilers to tell us whether a particular use of 
-		operator[] is for a read or a write.
-		*/
-
-
-		/*
-		RCString str1("RajeevKumarSharma");
-		RCString str2(str1);
-		RCString str3(str2);
-
+		str1.showStr();			//str1->refCount=1
+		str2.showStr();			//str2->refCount=1,It have seperate copy of string "XajeevKumarSharma"
 		
 		
-		//str2[0] = 'X';			//Now we will modifying str2, but It should not be inmpact str1
+		//Read Operation.
 
-		//str1.showStr();			//RajeevKumarSharma,Ref cnt 1
-		//str2.showStr();			//XajeevKumarSharma,Ref cnt 1
+		RCString str3("RajeevKumarNayan");
+		RCString str4(str3);
+
+		cout << str3[0] << endl;  //Read, Unfortunately in operator[] call, we canot determine        
+						          //whether it is called by read or write operation.
+		str3.showStr();			  //str3->refCount=1
+		str4.showStr();			  //str4->refCount=1
+								  //Still having seperate copy of string "RajeevKumarNayan" which is ellogical.		
+
 		
 
-		char ch = str1[3];
-		str1.showStr();
-		str2.showStr();
-		str3.showStr();
+		const RCString str5("ThisIsConstString");
+		str5.showStr();
+		char ch1 = str5[3];		   //Non Const RCString Read.
+		str5.showStr();			   //No address change after read, because of const
 
-		str1 = "kjhsakh";
-		str1.showStr();
 
-		*/
-
-		RCString s1("Rajeev");
-		RCString s2("Rajeev");
-
-		s1.showStr();
-		s2.showStr();
-
+		RCString str6("ThisIsNonConstString");
+		str6.showStr();
+		char ch2 = str6[1];			//String changed while reading.
+		str6.showStr();				//Address changed.
 
 
 	}
 	getchar();
+	return 0;
 }
-
-

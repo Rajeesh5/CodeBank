@@ -7,6 +7,7 @@
 class Image {
 public:
 	virtual void showImage() = 0;
+	virtual void showInfo() = 0;
 };
 
 
@@ -37,6 +38,10 @@ public:
 		// Actual Image rendering logic
 
 	}
+	void showInfo() {
+		//It is low cost operation.
+		//Show ISO,F-stop,Exposer setting,file Name,size etc.
+	}
 
 };
 
@@ -61,7 +66,7 @@ public:
 		this->imageFilePath = imageFilePath;
 	}
 
-	
+
 	void showImage() {
 
 		// create the Image Object only when the image is required to be shown
@@ -73,6 +78,12 @@ public:
 
 	}
 
+	void showInfo() {
+		//It is low cost operation.
+		//Show ISO,F-stop,Exposer setting,file Name,size etc.
+	}
+
+
 };
 
 //The code below illustrates a sample image viewer program; the program simply loads three images, 
@@ -82,13 +93,18 @@ public:
 //the three images are loaded into memory although one of them is actually rendered.
 
 
-int main() {
+int main_2() {
 
 	// assuming that the user selects a folder that has 3 images	
 	//create the 3 images 	
 	Image *highResolutionImage1 = new ImageProxy("sample/veryHighResPhoto1.jpeg");
 	Image *highResolutionImage2 = new ImageProxy("sample/veryHighResPhoto2.jpeg");
 	Image *highResolutionImage3 = new ImageProxy("sample/veryHighResPhoto3.jpeg");
+
+
+	//To show the image information, donot need to load image into the memory.
+	//It is light weight operation, for that not neeed to create bulky object.
+	highResolutionImage1->showInfo();
 
 	// assume that the user clicks on Image one item in a list
 	// this would cause the program to call showImage() for that image only
@@ -108,5 +124,6 @@ int main() {
 	// and not all have been actually displayed
 	// this is a waste of memory resources
 
+	return 0;
 }
 
