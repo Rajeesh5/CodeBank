@@ -46,7 +46,7 @@ private:
 	char *m_pStr;
 };
 
-int main() {
+int main_1() {
 
 	TextBlockString tb1("Rajeev");
 	tb1[3] = 'R';
@@ -56,7 +56,6 @@ int main() {
 
 	//char *ch = &tb2[0];
 	
-
-
+	return 0;
 
 }
