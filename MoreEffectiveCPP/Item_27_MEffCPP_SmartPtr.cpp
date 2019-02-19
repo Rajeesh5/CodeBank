@@ -1,4 +1,5 @@
 #include<iostream>
+#include<string.h>
 using namespace std;
 
 class Person {
@@ -14,25 +15,25 @@ class Person {
 
 
 public:
-	Person() : pName(0), age(0)	{}
+	Person() : pName(0), age(0) {}
 	//Person(char* nm, int age) : pName(initName(nm)), age(age){	}
 	Person(char* nm, int age) {
-		pName= new char[strlen(nm + 1)];
-		strcpy(pName, nm);
+		int size = strlen(nm);
+		pName = new char[size+ 1];
+		memcpy(pName, nm,strlen(nm));
+		pName[size] = '\0';
 		this->age = age;
 	}
-	~Person(){
+	~Person() {
 		delete pName;
 		age = 0;
 	}
 
-	
-
-	void Display()
+	void Display()const
 	{
 		printf("Name = %s Age = %d \n", pName, age);
 	}
-	void Shout()
+	void Shout()const
 	{
 		printf("Ooooooooooooooooo\n");
 	}
@@ -48,22 +49,39 @@ public:
 	}
 
 
-	SmartPtr(T *realPtr=0):pData(realPtr){}
+	SmartPtr(T *realPtr = 0) :pData(realPtr) {}
 	SmartPtr(const SmartPtr<T> &rhs);
 	SmartPtr<T>& operator=(const SmartPtr<T> &rhs);
 	T& operator *()const;
 	T* operator ->()const;
 
-	operator void *() {
+	operator void * () {			//Conversion method Class to void ptr.
 		if (pData == NULL) {
 			return 0;
 		}
-		else return 1;
+		else return (void*)1;
 	}
+
+	operator T*() { return pData; }
 
 private:
 	T * pData;
 };
+
+void showPerson(const Person *p) {			//method 1.
+	p->Display();
+	//p->Shout();
+	//We can also modify the p, now this is a big problem.
+}
+
+void showPerson(SmartPtr<Person> &p) {		//method 2.
+	Person *ptr = p;
+
+	ptr->Display();
+	ptr->Shout();
+
+	//Both method 1 & 2 are same.
+}
 
 template<typename T>
 SmartPtr<T>::SmartPtr(const SmartPtr<T> &rhs) {
@@ -99,13 +117,32 @@ T* SmartPtr<T>::operator->()const {
 
 }
 
+
+
+
+
 int main() {
 
-	SmartPtr<Person> sp( new Person("Rajeev Sharma", 32));
+
+
+
+
+	SmartPtr<Person> sp(new Person("Rajeev Sharma", 32));
+
+	showPerson(sp);
+	
+
 
 
 
 	//NULL check.
+
+
+	void * vp = sp;
+
+	void* tem  = sp;
+
+/*	
 	if (sp) {
 		sp->Display();
 	}
@@ -120,8 +157,8 @@ int main() {
 	if (!sp) {
 		sp->Display();
 	}
-	
-
+	*/
 	getchar();
+
 	return 0;
 }
