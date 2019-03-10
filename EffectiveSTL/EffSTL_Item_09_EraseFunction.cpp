@@ -2,12 +2,21 @@
 #include<vector>
 #include<string>
 #include<algorithm>
+#include<set>
 
 using namespace std;
 
 void showVectEle(int x) {
 	cout << x<<",";
 }
+
+class showSetEle {
+public:
+	void operator() (int x) {
+		cout << x << ",";
+	}
+
+};
 
 bool isEven(int x) {
 	return (x % 2 == 0);
@@ -62,6 +71,27 @@ int main() {
 	//postincrement your iterator when you pass it to erase.
 
 	
+	cout << "\n----------Set----------\n";
+
+	set<int, less<int>> s = { 1,2,3,4,5,6,7,8,9,10 };
+	set<int, less<int>>::iterator sIter;
+
+	for (sIter = s.begin(); sIter != s.end(); sIter++) {
+		if (isEven(*sIter))
+			s.erase(sIter);	//Once erase iterator will invalidate.
+							//program would have un-defined behaviour.
+		
+	}
+
+	for (sIter = s.begin(); sIter != s.end(); /*No increamnt here*/) {
+		if (isEven(*sIter))
+			s.erase(sIter++);	//While erase iterator also post-incremented here.
+		else sIter++;
+
+	}
+
+	for_each(s.begin(), s.end(), showVectEle);
+
 
 
 
